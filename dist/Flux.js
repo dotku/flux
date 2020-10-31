@@ -1,8 +1,11 @@
+/**
+ * Flux v3.1.3
+ */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
 	else if(typeof define === 'function' && define.amd)
-		define(factory);
+		define([], factory);
 	else if(typeof exports === 'object')
 		exports["Flux"] = factory();
 	else
@@ -52,10 +55,10 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
-	 * Copyright (c) 2014-2015, Facebook, Inc.
+	 * Copyright (c) 2014-present, Facebook, Inc.
 	 * All rights reserved.
 	 *
 	 * This source code is licensed under the BSD-style license found in the
@@ -67,12 +70,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	module.exports.Dispatcher = __webpack_require__(1);
 
-/***/ },
+/***/ }),
 /* 1 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
-	 * Copyright (c) 2014-2015, Facebook, Inc.
+	 * Copyright (c) 2014-present, Facebook, Inc.
 	 * All rights reserved.
 	 *
 	 * This source code is licensed under the BSD-style license found in the
@@ -307,61 +310,64 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	module.exports = Dispatcher;
 
-/***/ },
+/***/ }),
 /* 2 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
-	 * Copyright 2013-2015, Facebook, Inc.
-	 * All rights reserved.
+	 * Copyright (c) 2013-present, Facebook, Inc.
 	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
 	 *
-	 * @providesModule invariant
+	 * 
 	 */
+	'use strict';
 
-	"use strict";
-
+	var validateFormat =  true ? function (format) {
+	  if (format === undefined) {
+	    throw new Error('invariant(...): Second argument must be a string.');
+	  }
+	} : function (format) {};
 	/**
 	 * Use invariant() to assert state which your program assumes to be true.
 	 *
-	 * Provide sprintf-style format (only %s is supported) and arguments
-	 * to provide information about what broke and what you were
-	 * expecting.
+	 * Provide sprintf-style format (only %s is supported) and arguments to provide
+	 * information about what broke and what you were expecting.
 	 *
-	 * The invariant message will be stripped in production, but the invariant
-	 * will remain to ensure logic does not differ in production.
+	 * The invariant message will be stripped in production, but the invariant will
+	 * remain to ensure logic does not differ in production.
 	 */
 
-	var invariant = function invariant(condition, format, a, b, c, d, e, f) {
-	  if (true) {
-	    if (format === undefined) {
-	      throw new Error('invariant requires an error message argument');
-	    }
+	function invariant(condition, format) {
+	  for (var _len = arguments.length, args = new Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+	    args[_key - 2] = arguments[_key];
 	  }
+
+	  validateFormat(format);
 
 	  if (!condition) {
 	    var error;
+
 	    if (format === undefined) {
 	      error = new Error('Minified exception occurred; use the non-minified dev environment ' + 'for the full error message and additional helpful warnings.');
 	    } else {
-	      var args = [a, b, c, d, e, f];
 	      var argIndex = 0;
-	      error = new Error('Invariant Violation: ' + format.replace(/%s/g, function () {
-	        return args[argIndex++];
+	      error = new Error(format.replace(/%s/g, function () {
+	        return String(args[argIndex++]);
 	      }));
+	      error.name = 'Invariant Violation';
 	    }
 
-	    error.framesToPop = 1; // we don't care about invariant's own frame
+	    error.framesToPop = 1; // Skip invariant's own stack frame.
+
 	    throw error;
 	  }
-	};
+	}
 
 	module.exports = invariant;
 
-/***/ }
+/***/ })
 /******/ ])
 });
 ;

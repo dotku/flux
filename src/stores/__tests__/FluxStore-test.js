@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2014-2015, Facebook, Inc.
+ * Copyright (c) 2014-present, Facebook, Inc.
  * All rights reserved.
  *
  * This source code is licensed under the BSD-style license found in the
@@ -10,7 +10,8 @@
  * @typechecks
  */
 
-jest.dontMock('FluxStore');
+jest.mock('fbemitter');
+jest.mock('Dispatcher');
 
 var FluxStore = require('FluxStore');
 var Dispatcher = require('Dispatcher');
@@ -63,23 +64,17 @@ describe('FluxStore', () => {
   it('requires that subclasses override the __onDispatch() method', () => {
     new IncompleteFluxStore(dispatcher);
     var incompleteStoreCallback = dispatcher.register.mock.calls[1][0];
-    expect(() => incompleteStoreCallback({type: 'action-type'})).toThrow(
-      'IncompleteFluxStore has not overridden FluxStore.__onDispatch(), which is required'
-    );
+    expect(() => incompleteStoreCallback({type: 'action-type'})).toThrow();
     expect(() => registeredCallback({type: 'action-type'})).not.toThrow();
   });
 
   it('throws when __emitChange() is invoked outside of a dispatch', () => {
     var illegalFluxStore = new IllegalFluxStore(dispatcher);
-    expect(() => illegalFluxStore.illegalEmit()).toThrow(
-      'IllegalFluxStore.__emitChange(): Must be invoked while dispatching.'
-    );
+    expect(() => illegalFluxStore.illegalEmit()).toThrow();
   });
 
   it('throws when hasChanged() is invoked outside of a dispatch', () => {
-    expect(() => fluxStore.hasChanged()).toThrow(
-      'TestFluxStore.hasChanged(): Must be invoked while dispatching.'
-    );
+    expect(() => fluxStore.hasChanged()).toThrow();
   });
 
   it('emits an event on state change', () => {
